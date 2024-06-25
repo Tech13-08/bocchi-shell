@@ -17,7 +17,7 @@ fn main() {
         if trimmed_input.len() > 0 {
             match trimmed_input[0] {
                 "exit 0" => return,
-                "echo" => echo(if (trimmed_input.len() > 0) trimmed_input[1..].join(" ") else ""),
+                "echo" => echo(if (trimmed_input.len() > 0) {trimmed_input[1..].join(" ")} else {""}),
                 _ => println!("{}: command not found", trimmed_input[0]),
             }
         }
