@@ -18,7 +18,7 @@ fn main() {
             match trimmed_input[0] {
                 "exit" => {
                     if trimmed_input.len() > 1 {
-                        let exit_content = &trimmed_input[1];
+                        let exit_content = trimmed_input[1];
                         match exit_content {
                             "0" => return,
                             _ => return,
@@ -34,7 +34,7 @@ fn main() {
                         echo(" ");
                     }
                 },
-                _ => println!("{}: command not found", &trimmed_input[0]),
+                _ => println!("{}: command not found", trimmed_input[0]),
             }
         }
     }
