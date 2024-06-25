@@ -15,8 +15,8 @@ fn main() {
         stdin.read_line(&mut input).unwrap();
         let trimmedInput = input.trim();
         match trimmedInput {
-            "exit 0" => Ok(());
-            _ => println!("{}: command not found", trimmedInput);
+            "exit 0" => Ok(()),
+            _ => println!("{}: command not found", trimmedInput),
         }
     }
 }
