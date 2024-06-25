@@ -14,7 +14,7 @@ fn main() {
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
         input = input.trim();
-        match input.to_str() {
+        match input.as_str() {
             "exit 0" => Ok(());
             _ => println!("{}: command not found", input);
         }
