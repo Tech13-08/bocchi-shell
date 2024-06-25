@@ -13,10 +13,10 @@ fn main() {
         let stdin = io::stdin();
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
-        input = input.trim();
-        match input.as_str() {
+        let trimmedInput = input.trim();
+        match trimmedInput {
             "exit 0" => Ok(());
-            _ => println!("{}: command not found", input);
+            _ => println!("{}: command not found", trimmedInput);
         }
     }
 }
