@@ -16,7 +16,15 @@ fn main() {
         let trimmed_input = input.trim().split_whitespace().collect::<Vec<&str>>();
         if trimmed_input.len() > 0 {
             match trimmed_input[0] {
-                "exit 0" => return,
+                "exit" => {
+                    if trimmed_input.len() > 1 {
+                        let exit_content = &trimmed_input[1];
+                        match exit_content {
+                            "0" => return,
+                            _ => return,
+                        }
+                    }
+                },
                 "echo" => {
                     if trimmed_input.len() > 1 {
                         let echo_content = &trimmed_input[1..].join(" ");
