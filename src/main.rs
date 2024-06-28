@@ -1,8 +1,14 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
+use std::env;
+use std::path::Path;
+
 
 fn main() {
     // Uncomment this block to pass the first stage
+    let PATH = env::var("PATH");
+    let binding = PATH.expect("REASON");
+    let paths = binding.split(":").collect::<Vec<&str>>();
     
     let builtin = vec!["exit", "echo", "type"];
 
@@ -40,7 +46,16 @@ fn main() {
                         println!("{} is a shell builtin", trimmed_input[1]);
                     }
                     else{
-                        println!("{}: not found", trimmed_input[1]);
+                        let mut found = false;
+                        for path in paths.iter(){
+                            let file_path = format!("{}/{}", *path, trimmed_input[1]);
+                            if Path::new(&file_path).exists(){
+                                found = true;
+                                println!("{} is {}", trimmed_input[1], file_path);
+                                break;
+                            }
+                        }
+                        if !found {println!("{}: not found", trimmed_input[1]);}
                     }
                 },
                 _ => println!("{}: command not found", trimmed_input[0]),
