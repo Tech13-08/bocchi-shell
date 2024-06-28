@@ -2,6 +2,7 @@
 use std::io::{self, Write};
 use std::env;
 use std::path::Path;
+use std::process::{Command, Stdio};
 
 
 fn main() {
@@ -58,7 +59,31 @@ fn main() {
                         if !found {println!("{}: not found", trimmed_input[1]);}
                     }
                 },
-                _ => println!("{}: command not found", trimmed_input[0]),
+                _ => {
+                    let mut found = false;
+                    for path in paths.iter(){
+                        let file_path = format!("{}/{}", *path, trimmed_input[0]);
+                        if Path::new(&file_path).exists(){
+                            found = true;
+                            let output = Command::new(trimmed_input[0])
+                                // Tell the OS to record the command's output
+                                .stdout(Stdio::piped())
+                                .args(&trimmed_input[1..])
+                                // execute the command, wait for it to complete, then capture the output
+                                .output()
+                                // Blow up if the OS was unable to start the program
+                                .unwrap();
+
+                            // extract the raw bytes that we captured and interpret them as a string
+                            let stdout = String::from_utf8(output.stdout).unwrap();
+                            println!("{}", stdout);
+                            break;
+                        }
+                    }
+                    
+
+                    if !found {println!("{}: command not found", trimmed_input[0]);}
+                },
             }
         }
     }
