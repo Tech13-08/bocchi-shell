@@ -76,7 +76,7 @@ fn main() {
 
                             // extract the raw bytes that we captured and interpret them as a string
                             let stdout = String::from_utf8(output.stdout).unwrap();
-                            println!("{}", stdout);
+                            println!("{}", stdout.trim());
                             break;
                         }
                     }
