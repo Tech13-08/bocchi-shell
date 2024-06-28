@@ -4,6 +4,7 @@ use std::io::{self, Write};
 fn main() {
     // Uncomment this block to pass the first stage
     
+    let builtin = vec!["exit", "echo", "type"];
 
     // Wait for user input
     loop {
@@ -28,19 +29,22 @@ fn main() {
                 "echo" => {
                     if trimmed_input.len() > 1 {
                         let echo_content = &trimmed_input[1..].join(" ");
-                        echo(echo_content);
+                        println!("{}", echo_content);
                     }
                     else{
-                        echo(" ");
+                        println!(" ");
+                    }
+                },
+                "type" => {
+                    if builtin.contains(&trimmed_input[1]) {
+                        println!("{} is a shell builtin", trimmed_input[1]);
+                    }
+                    else{
+                        println!("{}: not found", trimmed_input[1]);
                     }
                 },
                 _ => println!("{}: command not found", trimmed_input[0]),
             }
         }
     }
-}
-
-
-fn echo(content: &str) {
-    println!("{}", content);
 }
