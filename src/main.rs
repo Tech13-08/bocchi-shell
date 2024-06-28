@@ -6,8 +6,8 @@ use std::path::Path;
 
 fn main() {
     // Uncomment this block to pass the first stage
-    let PATH = env::var("PATH");
-    let binding = PATH.expect("REASON");
+    let path = env::var("PATH");
+    let binding = path.expect("REASON");
     let paths = binding.split(":").collect::<Vec<&str>>();
     
     let builtin = vec!["exit", "echo", "type"];
