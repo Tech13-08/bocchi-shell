@@ -59,15 +59,36 @@ fn main() {
                         if !found {println!("{}: not found", trimmed_input[1]);}
                     }
                 },
-                "pwd" => println!("{}", env::current_dir().unwrap().into_os_string().into_string().unwrap()),
+                "pwd" => println!("{}", get_pwd()),
                 "cd" => {
-                    let new_path = Path::new(&trimmed_input[1]);
+                    let mut new_path_string = get_pwd();
+                    let mut parts = trimmed_input[1].split("/").collect::<Vec<&str>>();
+                    parts.retain(|x| *x != "");
+                    let mut relative = false;
+                    for part in parts.iter(){
+                        if part.to_owned() == "."{
+                            relative = true;
+                        }
+                        else if part.to_owned() == ".."{
+                            let path_vec = new_path_string.as_str().split("/").collect::<Vec<&str>>();
+                            new_path_string = (path_vec[..path_vec.len()-1].join("/")).to_owned();
+                            relative = true;
+                        }
+                        else{
+                            if relative {new_path_string.push_str(format!("/{}",part).as_str());}
+                            else {
+                                new_path_string = format!("/{}",part);
+                                relative = true;
+                            }
+                        }
+                    }
+                    let new_path = Path::new(new_path_string.as_str());
                     if new_path.exists(){
                         let _ = env::set_current_dir(&new_path);
                     }
                     else{
-                        println!("cd: {}: No such file or directory", new_path.display());
-                    }
+                        println!("cd: {}: No such file or directory", trimmed_input[1]);
+                    }   
                 },
                 _ => {
                     let mut found = false;
@@ -97,4 +118,10 @@ fn main() {
             }
         }
     }
+}
+
+
+
+fn get_pwd() -> String {
+    return env::current_dir().unwrap().into_os_string().into_string().unwrap();
 }
