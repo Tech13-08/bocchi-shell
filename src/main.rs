@@ -12,6 +12,7 @@ fn main() {
     let paths = binding.split(":").collect::<Vec<&str>>();
     
     let builtin = vec!["exit", "echo", "type", "pwd", "cd"];
+    
 
     // Wait for user input
     loop {
@@ -25,13 +26,14 @@ fn main() {
         if trimmed_input.len() > 0 {
             match trimmed_input[0] {
                 "exit" => {
-                    if trimmed_input.len() > 1 {
-                        let exit_content = trimmed_input[1];
-                        match exit_content {
-                            "0" => return,
-                            _ => return,
-                        }
-                    }
+                    // Handle error codes at some point
+                    // if trimmed_input.len() > 1 {
+                    //     let exit_content = trimmed_input[1];
+                    //     match exit_content {
+                    //         _ => return,
+                    //     }
+                    // }
+                    return;
                 },
                 "echo" => {
                     if trimmed_input.len() > 1 {
@@ -43,53 +45,63 @@ fn main() {
                     }
                 },
                 "type" => {
-                    if builtin.contains(&trimmed_input[1]) {
-                        println!("{} is a shell builtin", trimmed_input[1]);
+                    if trimmed_input.len() > 1 {
+                        if builtin.contains(&trimmed_input[1]) {
+                            println!("{} is a shell builtin", trimmed_input[1]);
+                        }
+                        else{
+                            let mut found = false;
+                            for path in paths.iter(){
+                                let file_path = format!("{}/{}", *path, trimmed_input[1]);
+                                if Path::new(&file_path).exists(){
+                                    found = true;
+                                    println!("{} is {}", trimmed_input[1], file_path);
+                                    break;
+                                }
+                            }
+                            if !found {println!("{}: not found", trimmed_input[1]);}
+                        }
                     }
                     else{
-                        let mut found = false;
-                        for path in paths.iter(){
-                            let file_path = format!("{}/{}", *path, trimmed_input[1]);
-                            if Path::new(&file_path).exists(){
-                                found = true;
-                                println!("{} is {}", trimmed_input[1], file_path);
-                                break;
-                            }
-                        }
-                        if !found {println!("{}: not found", trimmed_input[1]);}
+                        println!("Missing 1 argument");
                     }
                 },
                 "pwd" => println!("{}", get_pwd()),
                 "cd" => {
-                    let mut new_path_string = get_pwd();
-                    let mut parts = trimmed_input[1].split("/").collect::<Vec<&str>>();
-                    parts.retain(|x| *x != "");
-                    let mut relative = false;
-                    for part in parts.iter(){
-                        if part.to_owned() == "."{
-                            relative = true;
-                        }
-                        else if part.to_owned() == ".."{
-                            let path_vec = new_path_string.as_str().split("/").collect::<Vec<&str>>();
-                            new_path_string = (path_vec[..path_vec.len()-1].join("/")).to_owned();
-                            relative = true;
-                        }
-                        else{
-                            let home = get_home();
-                            if relative {new_path_string.push_str(format!("/{}",(if part.to_owned() == "~" {home.as_str()} else {part})).as_str());}
-                            else {
-                                new_path_string = format!("/{}",if part.to_owned() == "~" {home.as_str()} else {part});
+                    if trimmed_input.len() > 1 {
+                        let mut new_path_string = get_pwd();
+                        let mut parts = trimmed_input[1].split("/").collect::<Vec<&str>>();
+                        parts.retain(|x| *x != "");
+                        let mut relative = false;
+                        for part in parts.iter(){
+                            if part.to_owned() == "."{
                                 relative = true;
                             }
+                            else if part.to_owned() == ".."{
+                                let path_vec = new_path_string.as_str().split("/").collect::<Vec<&str>>();
+                                new_path_string = (path_vec[..path_vec.len()-1].join("/")).to_owned();
+                                relative = true;
+                            }
+                            else{
+                                let home = get_home();
+                                if relative {new_path_string.push_str(format!("/{}",(if part.to_owned() == "~" {home.as_str()} else {part})).as_str());}
+                                else {
+                                    new_path_string = format!("/{}",if part.to_owned() == "~" {home.as_str()} else {part});
+                                    relative = true;
+                                }
+                            }
                         }
-                    }
-                    let new_path = Path::new(new_path_string.as_str());
-                    if new_path.exists(){
-                        let _ = env::set_current_dir(&new_path);
+                        let new_path = Path::new(new_path_string.as_str());
+                        if new_path.exists(){
+                            let _ = env::set_current_dir(&new_path);
+                        }
+                        else{
+                            println!("cd: {}: No such file or directory", trimmed_input[1]);
+                        }   
                     }
                     else{
-                        println!("cd: {}: No such file or directory", trimmed_input[1]);
-                    }   
+                        println!("Missing 1 argument");
+                    }
                 },
                 _ => {
                     let mut found = false;
