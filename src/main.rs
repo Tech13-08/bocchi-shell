@@ -75,9 +75,10 @@ fn main() {
                             relative = true;
                         }
                         else{
-                            if relative {new_path_string.push_str(format!("/{}",part).as_str());}
+                            let home = get_home();
+                            if relative {new_path_string.push_str(format!("/{}",(if part.to_owned() == "~" {home.as_str()} else {part})).as_str());}
                             else {
-                                new_path_string = format!("/{}",part);
+                                new_path_string = format!("/{}",if part.to_owned() == "~" {home.as_str()} else {part});
                                 relative = true;
                             }
                         }
@@ -124,4 +125,8 @@ fn main() {
 
 fn get_pwd() -> String {
     return env::current_dir().unwrap().into_os_string().into_string().unwrap();
+}
+
+fn get_home() -> String {
+    return env::var("HOME").unwrap();
 }
