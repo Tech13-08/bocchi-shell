@@ -11,7 +11,7 @@ fn main() {
     let binding = path.expect("REASON");
     let paths = binding.split(":").collect::<Vec<&str>>();
     
-    let builtin = vec!["exit", "echo", "type", "pwd"];
+    let builtin = vec!["exit", "echo", "type", "pwd", "cd"];
 
     // Wait for user input
     loop {
@@ -60,6 +60,15 @@ fn main() {
                     }
                 },
                 "pwd" => println!("{}", env::current_dir().unwrap().into_os_string().into_string().unwrap()),
+                "cd" => {
+                    let new_path = Path::new(&trimmed_input[1]);
+                    if new_path.exists(){
+                        let _ = env::set_current_dir(&new_path);
+                    }
+                    else{
+                        println!("cd: {}: No such file or directory", new_path.display());
+                    }
+                },
                 _ => {
                     let mut found = false;
                     for path in paths.iter(){
