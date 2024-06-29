@@ -11,7 +11,7 @@ fn main() {
     let binding = path.expect("REASON");
     let paths = binding.split(":").collect::<Vec<&str>>();
     
-    let builtin = vec!["exit", "echo", "type"];
+    let builtin = vec!["exit", "echo", "type", "pwd"];
 
     // Wait for user input
     loop {
