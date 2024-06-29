@@ -59,6 +59,7 @@ fn main() {
                         if !found {println!("{}: not found", trimmed_input[1]);}
                     }
                 },
+                "pwd" => println!("{}", env::current_dir().unwrap().into_os_string().into_string().unwrap()),
                 _ => {
                     let mut found = false;
                     for path in paths.iter(){
